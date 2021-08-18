@@ -40,7 +40,8 @@ router.post('/register', (req, res) => {
         name,
         email,
         password,
-        confirmPassword
+        confirmPassword,
+        errors
       })
     }
     return bcrypt
