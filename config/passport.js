@@ -12,11 +12,11 @@ module.exports = app => {
     User.findOne({ where: { email } })
       .then(user => {
         if (!user) {
-          return done(null, false, { message: 'That email is not registered!' })
+          return done(null, false, { message: '此 Email 尚未註冊！' })
         }
         return bcrypt.compare(password, user.password).then(isMatch => {
           if (!isMatch) {
-            return done(null, false, { message: 'Email or Password incorrect.' })
+            return done(null, false, { message: '輸入的 Email 或密碼有誤' })
           }
           return done(null, user)
         })

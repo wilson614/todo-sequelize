@@ -12,7 +12,8 @@ router.get('/login', (req, res) => {
 
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/users/login'
+  failureRedirect: '/users/login',
+  failureFlash: true
 }))
 
 router.get('/register', (req, res) => {
@@ -21,9 +22,20 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
+  const errors = []
+  if (!name || !email || !password || !confirmPassword) {
+    errors.push({ message: '每個欄位都是必填！' })
+  }
+  if (password !== confirmPassword) {
+    errors.push({ message: '兩次輸入的密碼不相符！' })
+  }
+  if (errors.length) {
+    return res.render('register', { name, email, password, confirmPassword, errors })
+  }
+
   User.findOne({ where: { email } }).then(user => {
     if (user) {
-      console.log('User already exists')
+      errors.push({ message: '這個信箱已經註冊過了！' })
       return res.render('register', {
         name,
         email,
@@ -46,6 +58,7 @@ router.post('/register', (req, res) => {
 
 router.get('/logout', (req, res) => {
   req.logout()
+  req.flash('success_msg', '你已經成功登出！')
   res.redirect('/users/login')
 })
 
